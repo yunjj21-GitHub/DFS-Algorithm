@@ -1,0 +1,38 @@
+// 백준 2606 : 바이러스
+#include <vector>
+#include <string>
+#include <map>
+#include <iostream>
+
+using namespace std;
+
+vector<vector<int>> network(101); // 최대 컴퓨터의 수 100 (사용 인덱스 : 1 ~ 100)
+bool checked[101];
+int answer = -1; // 1번 컴퓨터가 DFS탐색되어 ++된 것을 빼준다.
+
+void DFS(int x) {
+	if (checked[x]) return;
+
+	checked[x] = true;
+	answer++;
+	for (int i = 0; i < network[x].size(); i++) {
+		DFS(network[x][i]);
+	}
+}
+
+int main() {
+	int n; // 컴퓨터의 수
+	cin >> n;
+	int m; // 네트워크 살에서 직접 연결되어 있는 컴퓨터 쌍의 수
+	cin >> m;
+	for (int i = 0; i < m; i++) {
+		int com1, com2;
+		cin >> com1 >> com2;
+		network[com1].push_back(com2);
+		network[com2].push_back(com1);
+	}
+	// DFS탐색 시작
+	DFS(1);
+
+	cout << answer << endl;
+}
