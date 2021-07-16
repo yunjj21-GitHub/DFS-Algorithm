@@ -1,0 +1,67 @@
+// 백준 1260 : DFS와 BFS
+#include <vector>
+#include <string>
+#include <algorithm>
+#include <queue>
+#include <iostream>
+
+using namespace std;
+
+int n, m, v; // 정점의 개수 n, 간선의 개수 m, 탐색을 시작할 정점의 번호 v
+vector<vector<int>> graph(1001);
+bool checked[1001];
+
+void DFS(int x) {
+	if (checked[x]) return;
+
+	checked[x] = true;
+	cout << x << " ";
+	for (int i = 0; i < graph[x].size(); i++) {
+		DFS(graph[x][i]);
+	}
+}
+
+int main() {
+	// 그래프에 대한 정보를 입력 받는다.
+	cin >> n >> m >> v;
+
+	for (int i = 0; i < m; i++) {
+		int x, y;
+		cin >> x >> y;
+		graph[x].push_back(y);
+		graph[y].push_back(x);
+	}
+
+	// 간선 정보를 오름차순 정렬
+	for (int i = 1; i < n + 1; i++) {
+		sort(graph[i].begin(), graph[i].end());
+	}
+
+	// DFS로 탐색한 결과
+	DFS(v);
+	cout << "\n";
+
+	// checked배열 초기화
+	for (int i = 1; i < n + 1; i++) {
+		checked[i] = false;
+	}
+
+	// BFS로 탐색한 결과
+	queue<int> q;
+	checked[v] = true;
+	q.push(v);
+
+	while (!q.empty()) {
+		int x = q.front();
+		q.pop();
+		cout << x << " ";
+
+		for (int i = 0; i < graph[x].size(); i++) {
+			if (!checked[graph[x][i]]) {
+				checked[graph[x][i]] = true;
+				q.push(graph[x][i]);
+			}
+		}
+	}
+	cout << "\n";
+}
