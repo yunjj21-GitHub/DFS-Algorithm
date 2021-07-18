@@ -1,0 +1,54 @@
+// 백준 1325 : 효율적인 해킹
+#include <vector>
+#include <string>
+#include <iostream>
+
+using namespace std;
+
+bool chk[10001];
+vector<int> graph[10001];
+int cnt;
+
+void DFS(int x) {
+	if (chk[x]) return;
+
+	chk[x] = true;
+	cnt++;
+	for (int i = 0; i < graph[x].size(); i++) {
+		DFS(graph[x][i]);
+	}
+}
+
+int main() {
+	int n, m; // 노드의 개수 n, 간선 정보의 수 m
+	cin >> n >> m;
+
+	// 간선 정보를 받아와 노드를 연결
+	for (int i = 0; i < m; i++) {
+		int a, b;
+		cin >> a >> b;
+		graph[b].push_back(a); // 단방향 (신뢰 관계)
+	}
+
+	int *answer = new int[n + 1]; // 사용 인덱스 : 1~n
+	int max = 0;
+	// DFS 탐색 (모든 노드를 시작점으로 탐색 시작)
+	for (int i = 1; i <= n; i++) {
+		cnt = 0;
+		DFS(i);
+
+		answer[i] = cnt;
+		if (cnt > max) max = cnt;
+
+		// 노드의 방문여부를 저장하는 chk배열 초기화
+		for (int j = 1; j <= n; j++) {
+			chk[j] = false;
+		}
+	}
+
+	// 답안출력
+	for (int i = 1; i <= n; i++) {
+		if (answer[i] == max) cout << i << " ";
+	}
+	cout << endl;
+}
