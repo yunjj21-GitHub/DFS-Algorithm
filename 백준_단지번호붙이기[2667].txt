@@ -1,0 +1,55 @@
+// 백준 2667 : 단지번호붙이기
+#include <vector>
+#include <string>
+#include <algorithm>
+#include <iostream>
+
+using namespace std;
+
+int n; // 지도의 크기(n*n)
+char map[26][26]; // 지도의 최대 크기 : 25*25
+bool chk[26][26];
+int num;
+vector<int> complexes;
+int dx[4] = { 0, 1, 0, -1 }; // x좌표의 상하좌우 움직임 정의
+int dy[4] = { 1, 0, -1, 0 }; // y좌표의 상하좌우 움직임 정의
+
+void DFS(int x, int y) {
+	if (chk[y][x]) return;
+
+	num++;
+	chk[y][x] = true;
+	for (int i = 0; i < 4; i++) {
+		int next_x = x + dx[i];
+		int next_y = y + dy[i];
+
+		if (map[next_y][next_x] == '1') DFS(next_x, next_y);
+	}
+}
+
+int main() {
+	cin >> n;
+
+	for (int i = 1; i <= n; i++) {
+		for (int j = 1; j <= n; j++) {
+			cin >> map[i][j];
+		}
+	}
+
+	// DFS 탐색
+	for (int i = 1; i <= n; i++) {
+		for (int j = 1; j <= n; j++) {
+			if (map[i][j] == '1' && chk[i][j] == 0) {
+				num = 0;
+				DFS(j, i);
+				complexes.push_back(num);
+			}
+		}
+	}
+
+	sort(complexes.begin(), complexes.end()); // 단지내 집의 수를 오름차순 정렬
+	cout << complexes.size() << endl;
+	for (int tmp : complexes) {
+		cout << tmp << endl;
+	}
+}
