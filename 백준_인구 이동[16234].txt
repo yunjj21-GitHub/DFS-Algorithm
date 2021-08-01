@@ -1,0 +1,82 @@
+// 백준 16234 : 인구 이동
+#include <vector>
+#include <string>
+#include <cmath>
+#include <iostream>
+
+using namespace std;
+
+int N, L, R;
+int map[50][50];
+bool chk[50][50];
+
+int dx[4] = { 1, -1, 0, 0 }; 
+int dy[4] = { 0, 0, 1, -1 };
+
+vector<pair<int, int>> ally;
+
+void DFS(int y, int x) {
+	if (chk[y][x]) return;
+
+	chk[y][x] = true;
+	ally.push_back({ y, x });
+	for (int i = 0; i < 4; i++) {
+		int nextY = y + dy[i];
+		int nextX = x + dx[i];
+
+		if (0 <= nextY && nextY < N && 0 <= nextX && nextX < N) {
+			int dif = abs(map[nextY][nextX] - map[y][x]);
+			if (L <= dif && dif <= R) DFS(nextY, nextX);
+		}
+	}
+}
+
+int main() {
+	cin >> N >> L >> R;
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			cin >> map[i][j];
+		}
+	}
+
+	int day = 0;
+	while (1) {
+		int preMap[50][50];
+
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < N; j++) {
+				preMap[i][j] = map[i][j];
+				chk[i][j] = false;
+			}
+		}
+
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < N; j++) {
+				DFS(i, j);
+
+				if (ally.size() > 1) {
+					int total = 0;
+					for (int z = 0; z < ally.size(); z++) {
+						total += map[ally[z].first][ally[z].second];
+					}
+					int average = total / ally.size();
+					for (int z = 0; z < ally.size(); z++) {
+						map[ally[z].first][ally[z].second] = average;
+					}
+				}
+				ally.clear();
+			}
+		}
+
+		int cnt = 0;
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < N; j++) {
+				if (preMap[i][j] == map[i][j]) cnt++;
+			}
+		}
+		if (cnt == N * N) break;
+
+		day++;
+	}
+	cout << day;
+}
