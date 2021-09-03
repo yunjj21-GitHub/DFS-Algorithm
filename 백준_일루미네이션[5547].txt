@@ -1,0 +1,59 @@
+// 백준 5547 : 일루미네이션
+#include <vector>
+#include <string>
+#include <iostream>
+
+using namespace std;
+
+int W, H;
+int map[102][102];
+bool chk[102][102];
+int dy[6] = { -1, 0, 1, 1, 0, -1 };
+int dx[2][6] = { // y가 짝수인지 홀수인지에 따라 다르게 정의
+	{0, 1, 0, -1, -1, -1},
+	{1, 1, 1, 0, -1, 0}
+};
+
+void DFS(int y, int x) {
+	if (chk[y][x]) return;
+
+	chk[y][x] = true;
+	for (int i = 0; i < 6; i++) {
+		int nxtY = y + dy[i];
+		int nxtX = x + dx[y % 2][i];
+
+		if (0 <= nxtY && nxtY <= H + 1 && 0 <= nxtX && nxtX <= W + 1) {
+			if (map[nxtY][nxtX] == 0) {
+				DFS(nxtY, nxtX);
+			}
+		}
+	}
+}
+
+int main() {
+	cin >> W >> H;
+	for (int i = 1; i <= H; i++) {
+		for (int j = 1; j <= W; j++) {
+			cin >> map[i][j];
+		}
+	}
+
+	// 건물 밖의 하얀색 영역을 찾아낸다. (chk가 true인 부분)
+	DFS(0, 0);
+
+	// 건물과 맞닿은 chk가 true인 부분을 센다.
+	int ans = 0;
+	for (int y = 1; y <= H; y++) {
+		for (int x = 1; x <= W; x++) {
+			if (map[y][x] == 1) {
+				for (int i = 0; i < 6; i++) {
+					int nxtY = y + dy[i];
+					int nxtX = x + dx[y % 2][i];
+
+					if (chk[nxtY][nxtX]) ans++;
+				}
+			}
+		}
+	}
+	cout << ans << '\n';
+}
