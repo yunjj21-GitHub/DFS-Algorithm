@@ -1,0 +1,57 @@
+// 백준 1967 : 트리의 지름
+#include <vector>
+#include <string>
+#include <iostream>
+
+using namespace std;
+
+vector<vector<pair<int, int>>> graph(10001);
+bool chk[10001];
+int maxSum = 0; // 가장 멀리 떨어진 거리를 저장
+int farthestNode = 0; // 가장 멀리 떨어진 노드를 저장
+int ans;
+
+void DFS(int x, int sum) {
+	if (chk[x]) return;
+
+	chk[x] = true;
+
+	// 현재의 노드가 출발 노드로 부터 가장 멀리 떨어졌는지 확인 & 갱신
+	if (maxSum < sum) {
+		maxSum = sum;
+		farthestNode = x;
+	}
+
+	for (int i = 0; i < graph[x].size(); i++) {
+		int y = graph[x][i].first;
+		int cost = graph[x][i].second;
+
+		DFS(y, sum + cost);
+	}
+}
+
+int main() {
+	int n;
+	cin >> n;
+	for (int i = 1; i <= n - 1; i++) {
+		int x, y, cost;
+		cin >> x >> y >> cost;
+		graph[x].push_back({ y, cost });
+		graph[y].push_back({ x, cost });
+	}
+
+	// 루트 노드로 부터 가장 멀리 떨어진 노드를 구함
+	DFS(1, 0);
+
+	// 필요한 배열 및 변수 복구
+	for (int i = 1; i <= n; i++) {
+		chk[i] = false;
+	}
+	maxSum = 0;
+
+	// 구한 노드로 부터 가장 멀리 떨어진 노드와의 거리를 구함
+	DFS(farthestNode, 0);
+	ans = maxSum;
+
+	cout << ans << '\n';
+}
