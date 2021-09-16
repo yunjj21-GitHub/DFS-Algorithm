@@ -1,0 +1,68 @@
+// 백준 9466 : 텀 프로젝트 (DFS를 이용한 사이클 찾기)
+#include <vector>
+#include <string>
+#include <iostream>
+
+using namespace std;
+
+int N;
+vector<vector<int>> graph;
+bool chk[100001];
+bool finished[100001];
+int child[100001];
+int ans = 0;
+
+void DFS(int x) {
+	chk[x] = true;
+
+	for (int i = 0; i < graph[x].size(); i++) {
+		int y = graph[x][i];
+
+		if (!chk[y]) { // 아직 방문하지 않은 노드라면
+			child[x] = y; // x의 자식노드 y
+			DFS(y);
+		}
+		else if (!finished[y]) { // 방문한 적은 있지만, 탐색이 완료 되지 않았다면 (사이클 발견)
+			// 사이클의 시작노드가 y가 된다.
+			for (int i = y; i != x; i = child[i]) {
+				ans++;
+			}
+			ans++;
+		}
+	}
+
+	finished[x] = true; // 탐색 완료
+}
+
+int main() {
+	int T;
+	cin >> T;
+	while (T--) {
+		cin >> N;
+
+		// 그래프 초기화
+		graph.assign(N + 1, vector<int>());
+
+		// 사용할 변수 및 배열 초기화
+		ans = 0;
+		for (int i = 1; i <= N; i++) {
+			chk[i] = false;
+			finished[i] = false;
+			child[i] = 0;
+		}
+
+		// 그래프 정보를 입력 받음
+		for (int i = 1; i <= N; i++) {
+			int x;
+			cin >> x;
+			graph[i].push_back(x);
+		}
+
+		// 사이클 찾기 (DFS 이용)
+		for (int i = 1; i <= N; i++) {
+			if (!chk[i]) DFS(i);
+		}
+
+		cout << N - ans << '\n';
+	}
+}
